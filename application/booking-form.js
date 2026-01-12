@@ -14,7 +14,7 @@ form.addEventListener("submit", async (e) => {
   const json = Object.fromEntries(data);
 
   try {
-const response = await fetch("/.netlify/application/functions/send-confirmation", {
+const response = await fetch("/.netlify/functions/send-confirmation", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
