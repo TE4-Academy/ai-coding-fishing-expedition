@@ -1,57 +1,190 @@
 const sgMail = require("@sendgrid/mail");
-const fs = require("fs");
-const path = require("path");
 
 // Initialize SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const apiKey = process.env.SENDGRID_API_KEY;
+const senderEmail = process.env.SENDER_EMAIL;
+const operatorEmail = process.env.OPERATOR_EMAIL;
+
+if (apiKey) {
+  sgMail.setApiKey(apiKey);
+}
 
 exports.handler = async (event) => {
+  console.log("Function called with method:", event.httpMethod);
+  
   // Only allow POST
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+    return { 
+      statusCode: 405, 
+      body: JSON.stringify({ error: "Method Not Allowed" })
+    };
   }
 
+  // Enable CORS
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Content-Type": "application/json"
+  };
+
   try {
+    // Check if environment variables are set
+    if (!apiKey) {
+      console.error("SENDGRID_API_KEY is not configured");
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          error: "Server configuration error",
+          details: "Email service not configured. Please set SENDGRID_API_KEY in Netlify environment variables."
+        })
+      };
+    }
+
+    if (!senderEmail) {
+      console.error("SENDER_EMAIL is not configured");
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          error: "Server configuration error",
+          details: "Sender email not configured. Please set SENDER_EMAIL in Netlify environment variables."
+        })
+      };
+    }
+
     const booking = JSON.parse(event.body);
-
-    // 1. Save to JSON
-    // Note: In production serverless, persistent file storage is tricky. 
-    // This works for the MVP demo but data resets on new deployments.
-    const dataDir = path.join(__dirname, "../data");
-    const bookingsPath = path.join(dataDir, "bookings.json");
+    console.log("Received booking:", booking);
     
-    // Ensure data directory exists
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir);
+    // Basic validation
+    if (!booking.name || !booking.email || !booking.date || !booking.passengers) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: "Missing required fields" })
+      };
     }
 
-    // Ensure file exists (create if not)
-    if (!fs.existsSync(bookingsPath)) {
-        fs.writeFileSync(bookingsPath, "[]");
-    }
+    // Generate booking ID and metadata
+    const bookingId = Date.now();
+    const createdAt = new Date().toISOString();
 
-    const bookings = JSON.parse(fs.readFileSync(bookingsPath, "utf8"));
-    booking.id = Date.now();
-    booking.status = "pending";
-    booking.created_at = new Date().toISOString();
-    bookings.push(booking);
-    fs.writeFileSync(bookingsPath, JSON.stringify(bookings, null, 2));
+    console.log("Attempting to send emails...");
 
-    // 2. Send Email
-    const msg = {
+    // Send confirmation email to customer
+    const customerMsg = {
       to: booking.email,
-      from: "operator@example.com", // REPLACE THIS with your verified SendGrid sender
-      subject: "Booking Received - Stockholm Fishing",
-      text: `Hi ${booking.name},\n\nWe have received your booking request for ${booking.passengers} people on ${booking.date}.\n\nThe operator will review your request and send a confirmation shortly.\n\nBest regards,\nStockholm Fishing Expeditions`,
-      html: `<p>Hi ${booking.name},</p><p>We have received your booking request for <strong>${booking.passengers} people</strong> on <strong>${booking.date}</strong>.</p><p>The operator will review your request and send a confirmation shortly.</p><p>Best regards,<br>Stockholm Fishing Expeditions</p>`,
+      from: senderEmail,
+      subject: "Booking Received - Stockholm Fishing Expeditions",
+      text: `Hi ${booking.name},
+
+We have received your booking request for ${booking.passengers} people on ${booking.date}.
+
+Booking Details:
+- Name: ${booking.name}
+- Email: ${booking.email}
+- Phone: ${booking.phone}
+- Date: ${booking.date}
+- Passengers: ${booking.passengers}
+- Booking ID: ${bookingId}
+
+The operator will review your request and send a confirmation shortly.
+
+Best regards,
+Stockholm Fishing Expeditions`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1e3a8a;">Booking Confirmation</h2>
+          <p>Hi ${booking.name},</p>
+          <p>We have received your booking request for <strong>${booking.passengers} people</strong> on <strong>${booking.date}</strong>.</p>
+          
+          <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0;">Booking Details</h3>
+            <p><strong>Name:</strong> ${booking.name}</p>
+            <p><strong>Email:</strong> ${booking.email}</p>
+            <p><strong>Phone:</strong> ${booking.phone}</p>
+            <p><strong>Date:</strong> ${booking.date}</p>
+            <p><strong>Passengers:</strong> ${booking.passengers}</p>
+            <p><strong>Booking ID:</strong> ${bookingId}</p>
+          </div>
+          
+          <p>The operator will review your request and send a confirmation shortly.</p>
+          <p style="color: #64748b; font-size: 14px; margin-top: 30px;">Best regards,<br>Stockholm Fishing Expeditions</p>
+        </div>
+      `,
     };
 
-    await sgMail.send(msg);
+    // Send notification email to operator (if configured)
+    const messages = [customerMsg];
+    
+    if (operatorEmail) {
+      const operatorMsg = {
+        to: operatorEmail,
+        from: senderEmail,
+        subject: `New Booking Request - ${booking.date}`,
+        text: `New booking request received:
 
-    return { statusCode: 200, body: JSON.stringify({ message: "Booking saved and email sent", id: booking.id }) };
+Name: ${booking.name}
+Email: ${booking.email}
+Phone: ${booking.phone}
+Date: ${booking.date}
+Passengers: ${booking.passengers}
+Booking ID: ${bookingId}
+Created: ${createdAt}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #1e3a8a;">New Booking Request</h2>
+            
+            <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p><strong>Name:</strong> ${booking.name}</p>
+              <p><strong>Email:</strong> ${booking.email}</p>
+              <p><strong>Phone:</strong> ${booking.phone}</p>
+              <p><strong>Date:</strong> ${booking.date}</p>
+              <p><strong>Passengers:</strong> ${booking.passengers}</p>
+              <p><strong>Booking ID:</strong> ${bookingId}</p>
+              <p><strong>Created:</strong> ${createdAt}</p>
+            </div>
+          </div>
+        `,
+      };
+      messages.push(operatorMsg);
+    }
+
+    // Send emails
+    await Promise.all(messages.map(msg => sgMail.send(msg)));
+    
+    console.log("Emails sent successfully");
+
+    return { 
+      statusCode: 200, 
+      headers,
+      body: JSON.stringify({ 
+        message: "Booking saved and confirmation email sent", 
+        id: bookingId 
+      }) 
+    };
 
   } catch (error) {
     console.error("Error processing booking:", error);
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    
+    // More detailed error for SendGrid issues
+    let errorMessage = "Failed to process booking";
+    let errorDetails = error.message;
+    
+    if (error.response) {
+      console.error("SendGrid error response:", error.response.body);
+      errorDetails = error.response.body.errors ? 
+        error.response.body.errors.map(e => e.message).join(", ") : 
+        error.response.body;
+    }
+    
+    return { 
+      statusCode: 500, 
+      headers,
+      body: JSON.stringify({ 
+        error: errorMessage,
+        details: errorDetails
+      }) 
+    };
   }
 };
