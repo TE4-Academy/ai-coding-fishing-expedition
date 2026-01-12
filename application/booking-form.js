@@ -14,10 +14,13 @@ form.addEventListener("submit", async (e) => {
   const json = Object.fromEntries(data);
 
   try {
-    const response = await fetch("send-confirmation.js", {
-      method: "POST",
-      body: JSON.stringify(json),
-    });
+const response = await fetch("/.netlify/functions/send-confirmation", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(json),
+});
 
     if (response.ok) {
       form.reset();
