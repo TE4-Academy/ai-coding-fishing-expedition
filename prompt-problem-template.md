@@ -4,6 +4,7 @@ Project idea:
 Stockholm-based exclusive fishing trip booking system. Single operator offers 1-trip-per-day exclusive service (1-5 customers max per trip). Customers self-serve book trips online, with operator managing approvals and availability. Includes homepage describing packages, booking calendar, email confirmations with configurable reminders, and admin dashboard for operator oversight.
 
 Users:
+
 - **End users (customers)**: Browse packages → book trip → receive confirmation email → get reminders → option to cancel/reschedule via email link
 - **Admin (operator)**: Review pending bookings → approve/reject → see all booking states → configure reminder timing & cancellation rules
 
