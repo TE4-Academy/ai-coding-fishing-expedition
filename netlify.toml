@@ -1,0 +1,9 @@
+[build]
+  command = "echo 'No build step'"
+  publish = "application"
+  functions = "application/functions"
+
+[[redirects]]
+  from = "/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
