@@ -1,73 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bokning - Bengans fisketurer</title>
-    <link rel="icon" type="image/png" href="https://vildmarken.se/wp-content/uploads/2019/07/iStock-1037503798-1024x612.png">    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bokningsförfrågan – Petersfiske</title>
+  <link rel="icon" type="image/png" href="https://vildmarken.se/wp-content/uploads/2019/07/iStock-1037503798-1024x612.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Fallback styles if Tailwind CDN is blocked (keeps the form readable & styled) -->
+  <style>
+    body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    .pf-fallback header{background:#0b2b5b;color:#fff;padding:22px 16px;text-align:center}
+    .pf-fallback main{max-width:520px;margin:0 auto;padding:36px 16px}
+    .pf-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;box-shadow:0 10px 24px rgba(2,6,23,.08)}
+    .pf-card label{display:block;font-size:14px;font-weight:600;margin:12px 0 6px;color:#334155}
+    .pf-card input{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px}
+    .pf-card button{width:100%;margin-top:16px;padding:12px 14px;border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:800;cursor:pointer}
+    .pf-card button:disabled{opacity:.7;cursor:not-allowed}
+    .pf-footer{text-align:center;padding:24px 12px;color:#64748b;font-size:13px}
+    .pf-toplinks{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+    .pf-toplinks a{color:#dbeafe;text-decoration:underline;text-underline-offset:4px;font-weight:600}
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans">
 
-    <!-- Hero Section -->
-    <header class="bg-blue-900 text-white py-5 px-4 text-center">
-        <div class="max-w-3xl mx-auto">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Bokning</h1>
-            <p class="text-xl text-blue-100 mb-8">Upplev det bästa fisket i Stockholm. Personlig guide, exklusiva grupper.</p>
+<body class="bg-slate-50 text-slate-900 font-sans pf-fallback">
+
+  <header class="bg-blue-900 text-white py-5 px-4 text-center">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-bold mb-3">Bokningsförfrågan</h1>
+      <p class="text-lg md:text-xl text-blue-100">
+        Skicka önskat datum och antal personer – Peter återkommer med bekräftelse.
+      </p>
+      <div class="pf-toplinks">
+        <a href="index.html">Till startsidan</a>
+        <a href="priser.html">Se priser</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto px-4 py-12">
+    <div class="bg-white p-8 rounded-2xl shadow-lg pf-card">
+      <h2 class="text-2xl font-bold mb-6 text-center text-slate-800">Reservera din plats</h2>
+
+      <form id="booking-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Namn</label>
+          <input type="text" name="name" placeholder="Ditt namn" required
+            class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="max-w-md mx-auto px-4 py-12">
-        
-        <!-- Booking Form Card -->
-        <div class="bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-2xl font-bold mb-6 text-center text-slate-800">Reservera din plats</h2>
-            
-            <form id="booking-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">För- och efternamn</label>
-                    <input type="text" name="name" placeholder="Ditt namn" required 
-                        class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Mailadress</label>
-                    <input type="email" name="email" placeholder="Namn.namnsson@exempel.com" required 
-                        class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Telefonnummer</label>
-                    <input type="tel" name="phone" placeholder="+46 70 123 4567" required 
-                        class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Datum</label>
-                    <input type="date" name="date" required 
-                        class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Antal passagerare (Max 5)</label>
-                    <input type="number" name="passengers" min="1" max="5" value="1" required 
-                        class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
-                </div>
-
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition duration-200 mt-4">
-                    Boka nu
-                </button>
-            </form>
-            <div id="form-message" class="mt-4 text-center hidden"></div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">E-postadress</label>
+          <input type="email" name="email" placeholder="namn@exempel.com" required
+            class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
         </div>
-    </main>
 
-    <footer class="text-center py-8 text-slate-500 text-sm">
-        &copy; 2025 Bengans fisketurer
-    </footer>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Telefon / mobil</label>
+          <input type="tel" name="phone" placeholder="+46 70 123 4567" required
+            class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+        </div>
 
-    <script src="booking-form.js"></script>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Datum</label>
+          <input type="date" name="date" required
+            class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Antal personer (max 5)</label>
+          <input type="number" name="passengers" min="1" max="5" value="1" required
+            class="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+        </div>
+
+        <button type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition duration-200 mt-4">
+          Skicka förfrågan
+        </button>
+      </form>
+
+      <div id="form-message" class="mt-4 text-center hidden"></div>
+    </div>
+  </main>
+
+  <footer class="text-center py-8 text-slate-500 text-sm pf-footer">
+    &copy; 2025 Petersfiske
+  </footer>
+
+  <script src="booking-form.js"></script>
 </body>
 </html>

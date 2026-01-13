@@ -1,173 +1,280 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fiskepaket - Bengans fisketurer</title>
-    <link rel="icon" type="image/png" href="https://vildmarken.se/wp-content/uploads/2019/07/iStock-1037503798-1024x612.png">    
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Petersfiske – Guidade sportfisketurer</title>
+  <link rel="icon" type="image/png" href="https://vildmarken.se/wp-content/uploads/2019/07/iStock-1037503798-1024x612.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-50 overflow-x-hidden">
 
-    <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center text-center text-white bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-700">
-        <div class="absolute inset-0 bg-black opacity-20"></div>
-        
-        <div class="relative z-10 max-w-4xl px-8 py-16">
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 drop-shadow-2xl tracking-tight">Fiskepaket för alla nivåer</h1>
-            <p class="text-xl md:text-2xl mb-8 drop-shadow-lg leading-relaxed">Upplev Stockholms bästa fiske med erfaren guide. Små grupper, personlig service och garanterat äventyr på vattnet.</p>
+<body class="bg-slate-50 text-slate-900 overflow-x-hidden">
+
+  <header class="sticky top-0 z-50 backdrop-blur bg-white/80 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-950 to-cyan-600 shadow-sm"></div>
+        <div class="leading-tight">
+          <div class="font-extrabold tracking-tight">Petersfiske</div>
+          <div class="text-xs text-slate-500 -mt-0.5">Guidade sportfisketurer</div>
         </div>
-    </section>
+      </a>
 
-    <!-- Packages Section -->
-    <section class="bg-gradient-to-b from-gray-50 to-gray-100 py-20 px-4">
-        <!-- Section Title -->
-        <div class="text-center mb-14">
-            <h2 class="text-4xl md:text-5xl font-bold text-blue-900 mb-3">Välj ditt fiskeäventyr</h2>
-            <p class="text-xl text-slate-600">Tre paket skräddarsydda för din upplevelse</p>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold">
+        <a href="#turer" class="text-slate-700 hover:text-slate-900">Turer</a>
+        <a href="priser.html" class="text-slate-700 hover:text-slate-900">Priser</a>
+        <a href="#om" class="text-slate-700 hover:text-slate-900">Om Peter</a>
+        <a href="#faq" class="text-slate-700 hover:text-slate-900">FAQ</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a href="priser.html"
+           class="hidden sm:inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 transition">
+          Jämför paket
+        </a>
+        <a href="form.html"
+           class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-blue-700 to-cyan-600 shadow hover:shadow-md transition">
+          Boka förfrågan
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="relative">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-cyan-800"></div>
+    <div class="absolute inset-0 wave-overlay opacity-40"></div>
+    <div class="absolute inset-0 bg-black/15"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 py-20 md:py-28">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="text-white">
+          <p class="inline-flex items-center gap-2 text-sm font-semibold text-white/80">
+            <span class="w-2 h-2 rounded-full bg-cyan-300"></span>
+            Stockholm • Mälaren • Vänern • Vättern
+          </p>
+
+          <h1 class="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow">
+            Guidade sportfisketurer <span class="text-cyan-200">med Peter</span>
+          </h1>
+
+          <p class="mt-5 text-lg md:text-xl text-white/85 leading-relaxed max-w-xl">
+            Små grupper, proffsig utrustning och ett upplägg som anpassas efter säsong och nivå.
+            Målet är enkelt: en trygg dag på vattnet och ett fiske du vill göra om.
+          </p>
+
+          <div class="mt-7 flex flex-col sm:flex-row gap-3">
+            <a href="priser.html"
+               class="inline-flex items-center justify-center rounded-xl px-6 py-3 font-bold text-slate-900 bg-white hover:bg-white/95 transition shadow">
+              Se priser & jämför
+            </a>
+            <a href="form.html"
+               class="inline-flex items-center justify-center rounded-xl px-6 py-3 font-bold text-white bg-white/10 hover:bg-white/15 border border-white/20 transition">
+              Skicka bokningsförfrågan
+            </a>
+          </div>
+
+          <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <div class="rounded-2xl bg-white/10 border border-white/15 px-4 py-3">
+              <div class="font-extrabold">Små grupper</div>
+              <div class="text-white/75">Max 5 pers</div>
+            </div>
+            <div class="rounded-2xl bg-white/10 border border-white/15 px-4 py-3">
+              <div class="font-extrabold">Utrustning</div>
+              <div class="text-white/75">Spön, beten, mm</div>
+            </div>
+            <div class="rounded-2xl bg-white/10 border border-white/15 px-4 py-3">
+              <div class="font-extrabold">Tryggt</div>
+              <div class="text-white/75">Flytväst, rutiner</div>
+            </div>
+            <div class="rounded-2xl bg-white/10 border border-white/15 px-4 py-3">
+              <div class="font-extrabold">Anpassat</div>
+              <div class="text-white/75">Nybörjare → van</div>
+            </div>
+          </div>
         </div>
-        
-        <!-- Packages Container -->
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
-            
-            <!-- 6 timmar Package -->
-            <div class="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 relative group">
-                <div class="absolute top-6 right-6 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide shadow-lg z-10">Populärast</div>
-                
-                <div class="bg-gradient-to-br from-blue-900 to-blue-700 p-10 text-center relative">
-                    <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">🎣</div>
-                    <h3 class="text-3xl font-bold text-white mb-2">Heldagsäventyr</h3>
-                    <p class="text-white text-opacity-90 text-lg">6 timmar på vattnet</p>
-                </div>
-                
-                <div class="p-10">
-                    <p class="text-slate-600 text-base leading-relaxed mb-8 h-20">En komplett fiskeupplevelse där vi riktar in oss på de bästa platserna. Perfekt för den som vill maximera sina chanser att fånga stor fisk.</p>
-                    
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Erfaren personlig guide</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">All utrustning ingår</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Lunch och dryck</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Flera fiskeplatser</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Max 4 personer</span>
-                        </li>
-                    </ul>
-                    
-                    <div class="text-center mb-8">
-                        <div class="text-5xl font-extrabold bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text text-transparent leading-none mb-1">6 000</div>
-                        <div class="text-slate-400 text-sm uppercase tracking-widest">SEK / Tur</div>
-                    </div>
-                    
-                    <a href="form.html" class="block w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-center rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">Boka ditt äventyr</a>
-                </div>
-            </div>
 
-            <!-- 3 timmar Package -->
-            <div class="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 relative group">
-                <div class="bg-gradient-to-br from-blue-900 to-blue-700 p-10 text-center relative">
-                    <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">🌅</div>
-                    <h3 class="text-3xl font-bold text-white mb-2">Halvdagstur</h3>
-                    <p class="text-white text-opacity-90 text-lg">3 timmar på vattnet</p>
-                </div>
-                
-                <div class="p-10">
-                    <p class="text-slate-600 text-base leading-relaxed mb-8 h-20">Fokuserad halvdag där vi besöker de mest produktiva platserna. Idealiskt för dig med begränsad tid som ändå vill ha en äkta fiskeupplevelse.</p>
-                    
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Erfaren guide</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">All utrustning ingår</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Fika och dryck</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Primetime fiske</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Max 4 personer</span>
-                        </li>
-                    </ul>
-                    
-                    <div class="text-center mb-8">
-                        <div class="text-5xl font-extrabold bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text text-transparent leading-none mb-1">3 500</div>
-                        <div class="text-slate-400 text-sm uppercase tracking-widest">SEK / Tur</div>
-                    </div>
-                    
-                    <a href="form.html" class="block w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-center rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">Boka ditt äventyr</a>
-                </div>
+        <div class="grid gap-4">
+          <div class="rounded-3xl overflow-hidden shadow-2xl border border-white/15 bg-white/10">
+            <div class="aspect-[4/3] flex items-center justify-center text-white/75">
+              <div class="text-center px-6">
+                <div class="font-extrabold text-white">Bild: Peter på båt</div>
+                <div class="text-sm text-white/70">Byts mot riktig bild</div>
+              </div>
             </div>
-
-            <!-- 1 timme Package -->
-            <div class="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 relative group">
-                <div class="bg-gradient-to-br from-blue-900 to-blue-700 p-10 text-center relative">
-                    <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">⚡</div>
-                    <h3 class="text-3xl font-bold text-white mb-2">Snabbtur</h3>
-                    <p class="text-white text-opacity-90 text-lg">1 timme på vattnet</p>
-                </div>
-                
-                <div class="p-10">
-                    <p class="text-slate-600 text-base leading-relaxed mb-8 h-20">Ett kortare prova-på-pass perfekt för nybörjare eller den som vill testa fisket. Vi fokuserar på abborre och gädda i närområdet.</p>
-                    
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Introduktion till fiske</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">All utrustning ingår</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Närområdet</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Abborre & gädda</span>
-                        </li>
-                        <li class="flex items-center text-slate-700">
-                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 flex-shrink-0">✓</span>
-                            <span class="text-sm">Max 4 personer</span>
-                        </li>
-                    </ul>
-                    
-                    <div class="text-center mb-8">
-                        <div class="text-5xl font-extrabold bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text text-transparent leading-none mb-1">1 500</div>
-                        <div class="text-slate-400 text-sm uppercase tracking-widest">SEK / Tur</div>
-                    </div>
-                    
-                    <a href="form.html" class="block w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-center rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">Boka ditt äventyr</a>
-                </div>
+          </div>
+          <div class="rounded-3xl overflow-hidden shadow-xl border border-white/15 bg-white/10">
+            <div class="aspect-[16/9] flex items-center justify-center text-white/75">
+              <div class="text-center px-6">
+                <div class="font-extrabold text-white">Bild: fångst / action</div>
+                <div class="text-sm text-white/70">Byts mot riktig bild</div>
+              </div>
             </div>
-
+          </div>
         </div>
-    </section>
 
-    <footer class="bg-gradient-to-r from-blue-900 to-blue-700 text-white text-opacity-80 text-center py-10 mt-16">
-        <p class="mb-2">&copy; 2025 Bengans Fisketurer</p>
-        <p class="text-white text-opacity-60 text-sm italic">Din väg till oförglömliga fiskeupplevelser i Stockholm</p>
-    </footer>
+      </div>
+    </div>
+
+    <div class="h-12 bg-gradient-to-b from-transparent to-slate-50"></div>
+  </section>
+
+  <section id="turer" class="py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Välj tur som passar</h2>
+          <p class="mt-2 text-slate-600 max-w-2xl">
+            Tre upplägg med olika längd. På prissidan kan du jämföra innehåll och se priser.
+          </p>
+        </div>
+        <a href="priser.html"
+           class="inline-flex items-center justify-center rounded-xl px-5 py-3 font-bold text-white bg-gradient-to-r from-blue-700 to-cyan-600 shadow hover:shadow-md transition">
+          Se priser & jämför
+        </a>
+      </div>
+
+      <div class="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <article class="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100">
+          <div class="p-8 bg-gradient-to-br from-blue-950 to-blue-800 text-white">
+            <div class="text-4xl">🎣</div>
+            <h3 class="mt-4 text-2xl font-extrabold">Heldagsäventyr</h3>
+            <p class="text-white/80">6 timmar • maxa chanserna</p>
+          </div>
+          <div class="p-8">
+            <p class="text-slate-600">Testa fler platser och metoder. För dig som vill lära dig mer och jaga större fisk.</p>
+            <a href="priser.html" class="mt-6 inline-flex font-bold text-blue-900 hover:text-blue-700">Jämför innehåll →</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100">
+          <div class="p-8 bg-gradient-to-br from-blue-900 to-cyan-700 text-white">
+            <div class="text-4xl">🌅</div>
+            <h3 class="mt-4 text-2xl font-extrabold">Halvdagstur</h3>
+            <p class="text-white/80">3 timmar • effektiv tur</p>
+          </div>
+          <div class="p-8">
+            <p class="text-slate-600">Fokuserad tur med bra tempo. Perfekt när du vill hinna fiska men har mindre tid.</p>
+            <a href="priser.html" class="mt-6 inline-flex font-bold text-blue-900 hover:text-blue-700">Jämför innehåll →</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100">
+          <div class="p-8 bg-gradient-to-br from-slate-900 to-blue-900 text-white">
+            <div class="text-4xl">⚡</div>
+            <h3 class="mt-4 text-2xl font-extrabold">Prova-på</h3>
+            <p class="text-white/80">1 timme • intro</p>
+          </div>
+          <div class="p-8">
+            <p class="text-slate-600">Kort och rolig introduktion. Passar familj/kompisgäng eller om du vill testa guidat fiske.</p>
+            <a href="priser.html" class="mt-6 inline-flex font-bold text-blue-900 hover:text-blue-700">Jämför innehåll →</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="om" class="py-16 bg-gradient-to-b from-slate-50 to-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Om Peter</h2>
+          <p class="mt-4 text-slate-600 leading-relaxed">
+            Peter guidar med fokus på trygghet och tydlighet: du får hjälp med teknik, betesval och strategi.
+            Turen anpassas efter väder och säsong för bästa upplevelse.
+          </p>
+
+          <div class="mt-6 grid sm:grid-cols-2 gap-4">
+            <div class="rounded-2xl border border-slate-200 p-5">
+              <div class="font-extrabold">Trygghet först</div>
+              <div class="text-sm text-slate-600 mt-1">Flytväst och rutiner.</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 p-5">
+              <div class="font-extrabold">Pedagogiskt</div>
+              <div class="text-sm text-slate-600 mt-1">Perfekt för nybörjare.</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 p-5">
+              <div class="font-extrabold">Fokus på resultat</div>
+              <div class="text-sm text-slate-600 mt-1">Rätt plats, rätt timing.</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 p-5">
+              <div class="font-extrabold">Företag</div>
+              <div class="text-sm text-slate-600 mt-1">Kickoff och kundevent.</div>
+            </div>
+          </div>
+
+          <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a href="form.html" class="inline-flex items-center justify-center rounded-xl px-6 py-3 font-bold text-white bg-slate-900 hover:bg-slate-800 transition">
+              Kontakta Peter
+            </a>
+            <a href="priser.html" class="inline-flex items-center justify-center rounded-xl px-6 py-3 font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 transition">
+              Se priser
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="rounded-3xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
+            <div class="aspect-[3/4] flex items-center justify-center text-slate-500 font-semibold">Bild: Peter porträtt</div>
+          </div>
+          <div class="rounded-3xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
+            <div class="aspect-[3/4] flex items-center justify-center text-slate-500 font-semibold">Bild: Peter med fångst</div>
+          </div>
+          <div class="col-span-2 rounded-3xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
+            <div class="aspect-[16/9] flex items-center justify-center text-slate-500 font-semibold">Bild: båt / skärgård</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="py-16 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Vanliga frågor</h2>
+
+      <div class="mt-8 grid lg:grid-cols-2 gap-6">
+        <div class="rounded-3xl p-6 bg-white border border-slate-200">
+          <div class="font-extrabold">Behöver jag egen utrustning?</div>
+          <p class="mt-2 text-slate-600 text-sm">Nej. Spön, beten och flytväst kan ingå. Säg till om du vill använda eget.</p>
+        </div>
+        <div class="rounded-3xl p-6 bg-white border border-slate-200">
+          <div class="font-extrabold">Passar det nybörjare?</div>
+          <p class="mt-2 text-slate-600 text-sm">Ja. Vi börjar med en kort genomgång och anpassar tempot efter er.</p>
+        </div>
+        <div class="rounded-3xl p-6 bg-white border border-slate-200">
+          <div class="font-extrabold">Vad händer vid dåligt väder?</div>
+          <p class="mt-2 text-slate-600 text-sm">Vi anpassar plats/metod eller bokar om vid osäkra förhållanden.</p>
+        </div>
+        <div class="rounded-3xl p-6 bg-white border border-slate-200">
+          <div class="font-extrabold">Hur bokar jag?</div>
+          <p class="mt-2 text-slate-600 text-sm">Skicka en bokningsförfrågan så återkommer Peter med upplägg och bekräftelse.</p>
+        </div>
+      </div>
+
+      <div class="mt-10 rounded-3xl p-8 bg-gradient-to-r from-blue-900 to-cyan-700 text-white flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
+        <div>
+          <div class="text-2xl font-extrabold">Redo för ditt fiskeäventyr?</div>
+          <div class="text-white/80 mt-1">Skicka en bokningsförfrågan så återkommer Peter snabbt.</div>
+        </div>
+        <a href="form.html" class="inline-flex justify-center rounded-xl px-6 py-3 font-bold bg-white text-slate-900 hover:bg-white/95 transition">Boka nu</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-slate-900 text-white/80 py-10">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
+      <div>
+        <div class="font-extrabold text-white">Petersfiske</div>
+        <div class="text-sm text-white/60">Guidade sportfisketurer</div>
+      </div>
+      <div class="text-sm text-white/60">
+        <a class="hover:text-white" href="priser.html">Priser</a>
+        <span class="mx-2">•</span>
+        <a class="hover:text-white" href="form.html">Bokning</a>
+      </div>
+    </div>
+  </footer>
 
 </body>
 </html>
