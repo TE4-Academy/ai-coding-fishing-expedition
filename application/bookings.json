@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "date": "2026-01-16",
+    "name": "Christian Eriksson",
+    "email": "christian@example.com",
+    "phone": "076...",
+    "package": "halvdag",
+    "passengers": 2
+  }
+]

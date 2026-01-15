@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <header class="max-w-5xl mx-auto px-4 py-6 flex justify-between items-center">
+    <div>
+      <h1 class="text-xl font-bold">Admin</h1>
+      <p class="text-sm text-slate-600">Bokningar</p>
+    </div>
+    <button id="logout" class="px-4 py-2 rounded-lg bg-slate-200 font-medium">Logga ut</button>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 pb-10">
+    <div id="status" class="text-sm text-slate-600 mb-4"></div>
+    <div class="bg-white border rounded-xl shadow-sm overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-100">
+          <tr>
+            <th class="p-3 text-left">Datum</th>
+            <th class="p-3 text-left">Namn</th>
+            <th class="p-3 text-left">E-post</th>
+            <th class="p-3 text-left">Telefon</th>
+            <th class="p-3 text-left">Paket</th>
+            <th class="p-3 text-left">Pers</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    if (localStorage.getItem("admin_ok") !== "1") {
+      location.href = "admin-login.html";
+    }
+
+    document.getElementById("logout").addEventListener("click", () => {
+      localStorage.removeItem("admin_ok");
+      location.href = "admin-login.html";
+    });
+
+    const statusEl = document.getElementById("status");
+    const rowsEl = document.getElementById("rows");
+
+    async function load() {
+      statusEl.textContent = "Laddar bokningar…";
+      const res = await fetch("bookings.json", { cache: "no-store" })
+
+      const bookings = await res.json();
+
+      rowsEl.innerHTML = "";
+      if (!bookings.length) {
+        rowsEl.innerHTML = `<tr><td class="p-3 text-slate-500" colspan="6">Inga bokningar.</td></tr>`;
+        statusEl.textContent = "Klart.";
+        return;
+      }
+
+      for (const b of bookings) {
+        const tr = document.createElement("tr");
+        tr.className = "border-t";
+        tr.innerHTML = `
+          <td class="p-3">${b.date || "-"}</td>
+          <td class="p-3">${b.name || "-"}</td>
+          <td class="p-3">${b.email || "-"}</td>
+          <td class="p-3">${b.phone || "-"}</td>
+          <td class="p-3">${b.package || "-"}</td>
+          <td class="p-3">${b.passengers || "-"}</td>
+        `;
+        rowsEl.appendChild(tr);
+      }
+
+      statusEl.textContent = `Klart. ${bookings.length} bokningar.`;
+    }
+
+    load().catch(err => statusEl.textContent = "Fel: " + err.message);
+  </script>
+</body>
+</html>

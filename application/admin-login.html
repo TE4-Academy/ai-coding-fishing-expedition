@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50">
+  <main class="max-w-md mx-auto px-4 py-10">
+    <div class="bg-white border rounded-2xl p-6 shadow-sm">
+      <h1 class="text-xl font-bold mb-2">Admin</h1>
+      <p class="text-sm text-slate-600 mb-6"></p>
+
+      <form id="f" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Lösenord</label>
+          <input id="pw" type="password" class="w-full px-4 py-2 border rounded-lg" required />
+        </div>
+        <button class="w-full px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">Logga in</button>
+        <a
+  href="index.html"
+  class="block text-center mt-3 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200"
+>
+  ← Tillbaka
+</a>
+
+        <div id="msg" class="text-sm text-red-600 hidden"></div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // OBS: Detta är INTE säkerhet. Hashen kan alltid extraheras.
+    const PASSWORD_HASH = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
+
+    async function sha256hex(str) {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    document.getElementById("f").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById("msg");
+      msg.classList.add("hidden");
+
+      const pw = document.getElementById("pw").value.trim();
+
+      const hash = await sha256hex(pw);
+
+      console.log("INPUT:", JSON.stringify(pw));
+console.log("HASH:", hash);
+console.log("EXPECTED:", PASSWORD_HASH);
+
+
+      if (hash === PASSWORD_HASH) {
+        localStorage.setItem("admin_ok", "1");
+        location.href = "admin.html";
+      } else {
+        msg.textContent = "Fel lösenord";
+        msg.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
