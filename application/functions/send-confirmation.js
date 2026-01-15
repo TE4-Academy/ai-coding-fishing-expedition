@@ -1,4 +1,6 @@
 const crypto = require("node:crypto");
+const { getStore } = require("@netlify/blobs");
+
 
 const sgMail = require("@sendgrid/mail");
 const store = getStore("bookings", {
@@ -135,7 +137,12 @@ exports.handler = async (event) => {
     };
 
     // Persist to Netlify Blobs
-    const store = getStore("bookings", { consistency: "strong" });
+    const store = getStore("bookings", {
+  consistency: "strong",
+  siteID: process.env.NETLIFY_SITE_ID,
+  token: process.env.NETLIFY_AUTH_TOKEN,
+});
+
     await store.setJSON(bookingId, record);
 
     // Secure action token for accept/deny links

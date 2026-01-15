@@ -1,4 +1,6 @@
 const crypto = require("node:crypto");
+const { getStore } = require("@netlify/blobs");
+
 
 const sgMail = require("@sendgrid/mail");
 const store = getStore("bookings", {
@@ -95,7 +97,12 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers: corsHeaders, body: page({ title: "Ogiltig länk", body: `<h1>❌ Ogiltig länk</h1>` }) };
     }
 
-    const store = getStore("bookings", { consistency: "strong" });
+    const store = getStore("bookings", {
+  consistency: "strong",
+  siteID: process.env.NETLIFY_SITE_ID,
+  token: process.env.NETLIFY_AUTH_TOKEN,
+});
+
     const record = await store.getJSON(id);
 
     if (!record) {

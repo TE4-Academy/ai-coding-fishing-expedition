@@ -1,8 +1,6 @@
-const store = getStore("bookings", {
-  consistency: "strong",
-  siteID: process.env.NETLIFY_SITE_ID,
-  token: process.env.NETLIFY_AUTH_TOKEN,
-});
+const { getStore } = require("@netlify/blobs");
+
+
 
 
 const corsHeaders = {
@@ -22,7 +20,12 @@ exports.handler = async (event) => {
   }
 
   try {
-    const store = getStore("bookings", { consistency: "strong" });
+    const store = getStore("bookings", {
+  consistency: "strong",
+  siteID: process.env.NETLIFY_SITE_ID,
+  token: process.env.NETLIFY_AUTH_TOKEN,
+});
+
     const status = String(event.queryStringParameters?.status || "").toLowerCase();
     const { blobs } = await store.list();
 
