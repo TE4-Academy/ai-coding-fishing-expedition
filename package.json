@@ -1,5 +1,11 @@
+
 {
+  "name": "petersfiske",
+  "private": true,
+  "version": "1.0.0",
+  "type": "commonjs",
   "dependencies": {
-    "@sendgrid/mail": "^8.1.6"
+    "@netlify/blobs": "^8.0.0",
+    "@sendgrid/mail": "^8.1.4"
   }
 }

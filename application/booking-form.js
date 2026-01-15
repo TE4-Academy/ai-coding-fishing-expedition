@@ -19,19 +19,16 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify(json),
     });
 
-    if (!response.ok) throw new Error("Submission failed");
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload?.details || "Submission failed");
 
     form.reset();
     messageDiv.innerHTML =
-      "<p class='text-green-600 font-medium'>✅ Förfrågan skickad! Kolla din e-post för bekräftelse.</p>";
+      "<p class='text-green-600 font-medium'>✅ Förfrågan skickad! Du får en automatisk bekräftelse i din e-post. Peter kollar och återkommer så snart han kan.</p>";
     messageDiv.classList.remove("hidden");
   } catch (error) {
     console.error(error);
     messageDiv.innerHTML =
-      "<p class='text-red-600'>❌ Något gick fel. Försök igen.</p>";
-    messageDiv.classList.remove("hidden");
-  } finally {
-    button.disabled = false;
-    button.innerText = originalText;
+      `<p class='text-red-600'>❌ Något gick fel. ${error.message ? `(${error.message})` : ""} Försök igen.</p>`;
   }
 });

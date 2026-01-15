@@ -1,190 +1,261 @@
-const sgMail = require("@sendgrid/mail");
+const crypto = require("node:crypto");
 
-// Initialize SendGrid
+const sgMail = require("@sendgrid/mail");
+const { getStore } = require("@netlify/blobs");
+
+// Environment variables
 const apiKey = process.env.SENDGRID_API_KEY;
 const senderEmail = process.env.SENDER_EMAIL;
 const operatorEmail = process.env.OPERATOR_EMAIL;
+const tokenSecret = process.env.BOOKING_TOKEN_SECRET;
 
-if (apiKey) {
-  sgMail.setApiKey(apiKey);
+if (apiKey) sgMail.setApiKey(apiKey);
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Content-Type": "application/json",
+};
+
+function hmac(input) {
+  return crypto.createHmac("sha256", tokenSecret).update(input).digest("hex");
+}
+
+function packageLabel(pkg) {
+  const map = {
+    prova: "Prova-på (1 timme)",
+    halvdag: "Halvdagstur (3 timmar)",
+    heldag: "Heldagsäventyr (6 timmar)",
+  };
+  return map[pkg] || pkg || "—";
 }
 
 exports.handler = async (event) => {
-  console.log("Function called with method:", event.httpMethod);
-  
-  // Only allow POST
+  // Preflight
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 204, headers: corsHeaders, body: "" };
+  }
+
   if (event.httpMethod !== "POST") {
-    return { 
-      statusCode: 405, 
-      body: JSON.stringify({ error: "Method Not Allowed" })
+    return {
+      statusCode: 405,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
 
-  // Enable CORS
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json"
-  };
-
   try {
-    // Check if environment variables are set
     if (!apiKey) {
-      console.error("SENDGRID_API_KEY is not configured");
       return {
         statusCode: 500,
-        headers,
-        body: JSON.stringify({ 
+        headers: corsHeaders,
+        body: JSON.stringify({
           error: "Server configuration error",
-          details: "Email service not configured. Please set SENDGRID_API_KEY in Netlify environment variables."
-        })
+          details: "Email service not configured. Set SENDGRID_API_KEY in Netlify env vars.",
+        }),
       };
     }
 
     if (!senderEmail) {
-      console.error("SENDER_EMAIL is not configured");
       return {
         statusCode: 500,
-        headers,
-        body: JSON.stringify({ 
+        headers: corsHeaders,
+        body: JSON.stringify({
           error: "Server configuration error",
-          details: "Sender email not configured. Please set SENDER_EMAIL in Netlify environment variables."
-        })
+          details: "Sender email not configured. Set SENDER_EMAIL in Netlify env vars.",
+        }),
       };
     }
 
-    const booking = JSON.parse(event.body);
-    console.log("Received booking:", booking);
-    
+    if (!operatorEmail) {
+      return {
+        statusCode: 500,
+        headers: corsHeaders,
+        body: JSON.stringify({
+          error: "Server configuration error",
+          details: "Operator email not configured. Set OPERATOR_EMAIL (Peters mail) in Netlify env vars.",
+        }),
+      };
+    }
+
+    if (!tokenSecret) {
+      return {
+        statusCode: 500,
+        headers: corsHeaders,
+        body: JSON.stringify({
+          error: "Server configuration error",
+          details: "Missing BOOKING_TOKEN_SECRET in Netlify env vars.",
+        }),
+      };
+    }
+
+    const booking = JSON.parse(event.body || "{}") || {};
+
     // Basic validation
-    if (!booking.name || !booking.email || !booking.date || !booking.passengers) {
+    const required = ["name", "email", "phone", "date", "passengers", "package", "experience"];
+    const missing = required.filter((k) => !booking[k]);
+    if (missing.length) {
       return {
         statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: "Missing required fields" })
+        headers: corsHeaders,
+        body: JSON.stringify({ error: "Missing required fields", details: missing.join(", ") }),
       };
     }
 
-    // Generate booking ID and metadata
-    const bookingId = Date.now();
+    const passengersNum = Number(booking.passengers);
+    if (!Number.isFinite(passengersNum) || passengersNum < 1 || passengersNum > 5) {
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify({ error: "Invalid passengers", details: "passengers must be 1–5" }),
+      };
+    }
+
+    const bookingId = crypto.randomUUID();
     const createdAt = new Date().toISOString();
 
-    console.log("Attempting to send emails...");
+    const record = {
+      id: bookingId,
+      createdAt,
+      status: "pending",
+      name: String(booking.name).trim(),
+      email: String(booking.email).trim(),
+      phone: String(booking.phone).trim(),
+      date: String(booking.date),
+      passengers: passengersNum,
+      package: String(booking.package),
+      experience: String(booking.experience),
+      notes: String(booking.notes || "").trim(),
+    };
 
-    // Send confirmation email to customer
+    // Persist to Netlify Blobs
+    const store = getStore("bookings", { consistency: "strong" });
+    await store.setJSON(bookingId, record);
+
+    // Secure action token for accept/deny links
+    const token = hmac(`${bookingId}|${record.createdAt}`);
+
+    // Helpful base URL
+    const host = event.headers?.["x-forwarded-host"] || event.headers?.host;
+    const proto = event.headers?.["x-forwarded-proto"] || "https";
+    const baseUrl = host ? `${proto}://${host}` : "";
+
+    const acceptUrl = `${baseUrl}/.netlify/functions/manage-booking?action=accept&id=${encodeURIComponent(
+      bookingId
+    )}&token=${encodeURIComponent(token)}`;
+    const denyUrl = `${baseUrl}/.netlify/functions/manage-booking?action=deny&id=${encodeURIComponent(
+      bookingId
+    )}&token=${encodeURIComponent(token)}`;
+
+    // Customer mail (received)
     const customerMsg = {
-      to: booking.email,
+      to: record.email,
       from: senderEmail,
-      subject: "Booking Received - Stockholm Fishing Expeditions",
-      text: `Hi ${booking.name},
+      subject: "Bokningsförfrågan mottagen – Petersfiske",
+      text: `Hej ${record.name}!
 
-We have received your booking request for ${booking.passengers} people on ${booking.date}.
+Vi har tagit emot din bokningsförfrågan.
 
-Booking Details:
-- Name: ${booking.name}
-- Email: ${booking.email}
-- Phone: ${booking.phone}
-- Date: ${booking.date}
-- Passengers: ${booking.passengers}
-- Booking ID: ${bookingId}
+Detaljer:
+- Paket: ${packageLabel(record.package)}
+- Datum: ${record.date}
+- Antal personer: ${record.passengers}
+- Telefon: ${record.phone}
 
-The operator will review your request and send a confirmation shortly.
+Peter återkommer så snart han har kollat läget.
 
-Best regards,
-Stockholm Fishing Expeditions`,
+Tight lines!
+/ Petersfiske`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1e3a8a;">Booking Confirmation</h2>
-          <p>Hi ${booking.name},</p>
-          <p>We have received your booking request for <strong>${booking.passengers} people</strong> on <strong>${booking.date}</strong>.</p>
-          
-          <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="margin-top: 0;">Booking Details</h3>
-            <p><strong>Name:</strong> ${booking.name}</p>
-            <p><strong>Email:</strong> ${booking.email}</p>
-            <p><strong>Phone:</strong> ${booking.phone}</p>
-            <p><strong>Date:</strong> ${booking.date}</p>
-            <p><strong>Passengers:</strong> ${booking.passengers}</p>
-            <p><strong>Booking ID:</strong> ${bookingId}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto;">
+          <h2 style="color:#0b2b5b; margin:0 0 12px;">✅ Bokningsförfrågan mottagen</h2>
+          <p style="margin:0 0 12px;">Hej <strong>${escapeHtml(record.name)}</strong>!</p>
+          <p style="margin:0 0 16px;">Vi har tagit emot din förfrågan och Peter återkommer så snart han har kollat läget.</p>
+          <div style="background:#f1f5f9; padding:16px; border-radius:12px;">
+            <p style="margin:0 0 6px;"><strong>Paket:</strong> ${escapeHtml(packageLabel(record.package))}</p>
+            <p style="margin:0 0 6px;"><strong>Datum:</strong> ${escapeHtml(record.date)}</p>
+            <p style="margin:0 0 6px;"><strong>Antal personer:</strong> ${record.passengers}</p>
+            <p style="margin:0;"><strong>Telefon:</strong> ${escapeHtml(record.phone)}</p>
           </div>
-          
-          <p>The operator will review your request and send a confirmation shortly.</p>
-          <p style="color: #64748b; font-size: 14px; margin-top: 30px;">Best regards,<br>Stockholm Fishing Expeditions</p>
+          <p style="color:#64748b; font-size: 13px; margin:16px 0 0;">Det här är en förfrågan – du får en separat bekräftelse när turen är godkänd.</p>
         </div>
       `,
     };
 
-    // Send notification email to operator (if configured)
-    const messages = [customerMsg];
-    
-    if (operatorEmail) {
-      const operatorMsg = {
-        to: operatorEmail,
-        from: senderEmail,
-        subject: `New Booking Request - ${booking.date}`,
-        text: `New booking request received:
+    // Operator mail with accept/deny
+    const operatorMsg = {
+      to: operatorEmail,
+      from: senderEmail,
+      subject: `Ny bokningsförfrågan – ${record.date}`,
+      text: `Ny bokningsförfrågan:
 
-Name: ${booking.name}
-Email: ${booking.email}
-Phone: ${booking.phone}
-Date: ${booking.date}
-Passengers: ${booking.passengers}
-Booking ID: ${bookingId}
-Created: ${createdAt}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1e3a8a;">New Booking Request</h2>
-            
-            <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <p><strong>Name:</strong> ${booking.name}</p>
-              <p><strong>Email:</strong> ${booking.email}</p>
-              <p><strong>Phone:</strong> ${booking.phone}</p>
-              <p><strong>Date:</strong> ${booking.date}</p>
-              <p><strong>Passengers:</strong> ${booking.passengers}</p>
-              <p><strong>Booking ID:</strong> ${bookingId}</p>
-              <p><strong>Created:</strong> ${createdAt}</p>
-            </div>
+Namn: ${record.name}
+Email: ${record.email}
+Telefon: ${record.phone}
+Datum: ${record.date}
+Paket: ${packageLabel(record.package)}
+Personer: ${record.passengers}
+Nivå: ${record.experience}
+Anteckningar: ${record.notes || "-"}
+
+Acceptera: ${acceptUrl}
+Neka: ${denyUrl}
+
+ID: ${record.id}
+Skapad: ${record.createdAt}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto;">
+          <h2 style="color:#0b2b5b; margin:0 0 12px;">🎣 Ny bokningsförfrågan</h2>
+          <div style="background:#f1f5f9; padding:16px; border-radius:12px;">
+            <p style="margin:0 0 6px;"><strong>Datum:</strong> ${escapeHtml(record.date)}</p>
+            <p style="margin:0 0 6px;"><strong>Paket:</strong> ${escapeHtml(packageLabel(record.package))}</p>
+            <p style="margin:0 0 6px;"><strong>Personer:</strong> ${record.passengers}</p>
+            <p style="margin:0 0 6px;"><strong>Namn:</strong> ${escapeHtml(record.name)}</p>
+            <p style="margin:0 0 6px;"><strong>Email:</strong> ${escapeHtml(record.email)}</p>
+            <p style="margin:0 0 6px;"><strong>Telefon:</strong> ${escapeHtml(record.phone)}</p>
+            <p style="margin:0 0 6px;"><strong>Nivå:</strong> ${escapeHtml(record.experience)}</p>
+            <p style="margin:0;"><strong>Anteckningar:</strong> ${escapeHtml(record.notes || "-")}</p>
           </div>
-        `,
-      };
-      messages.push(operatorMsg);
-    }
 
-    // Send emails
-    await Promise.all(messages.map(msg => sgMail.send(msg)));
-    
-    console.log("Emails sent successfully");
+          <div style="margin:16px 0 0; display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="${acceptUrl}" style="background:#16a34a;color:white;padding:12px 16px;border-radius:12px;text-decoration:none;font-weight:800;">✅ Acceptera</a>
+            <a href="${denyUrl}" style="background:#dc2626;color:white;padding:12px 16px;border-radius:12px;text-decoration:none;font-weight:800;">❌ Neka</a>
+          </div>
 
-    return { 
-      statusCode: 200, 
-      headers,
-      body: JSON.stringify({ 
-        message: "Booking saved and confirmation email sent", 
-        id: bookingId 
-      }) 
+          <p style="color:#64748b; font-size: 12px; margin:16px 0 0;">ID: ${escapeHtml(record.id)} • Skapad: ${escapeHtml(record.createdAt)}</p>
+        </div>
+      `,
     };
 
+    await Promise.all([sgMail.send(customerMsg), sgMail.send(operatorMsg)]);
+
+    return {
+      statusCode: 200,
+      headers: corsHeaders,
+      body: JSON.stringify({ message: "Booking saved", id: bookingId }),
+    };
   } catch (error) {
     console.error("Error processing booking:", error);
-    
-    // More detailed error for SendGrid issues
-    let errorMessage = "Failed to process booking";
-    let errorDetails = error.message;
-    
-    if (error.response) {
-      console.error("SendGrid error response:", error.response.body);
-      errorDetails = error.response.body.errors ? 
-        error.response.body.errors.map(e => e.message).join(", ") : 
-        error.response.body;
+
+    let details = error?.message || "Unknown error";
+    if (error?.response?.body?.errors) {
+      details = error.response.body.errors.map((e) => e.message).join(", ");
     }
-    
-    return { 
-      statusCode: 500, 
-      headers,
-      body: JSON.stringify({ 
-        error: errorMessage,
-        details: errorDetails
-      }) 
+
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: "Failed to process booking", details }),
     };
   }
 };
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
