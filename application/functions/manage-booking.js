@@ -1,7 +1,12 @@
 const crypto = require("node:crypto");
 
 const sgMail = require("@sendgrid/mail");
-const { getStore } = require("@netlify/blobs");
+const store = getStore("bookings", {
+  consistency: "strong",
+  siteID: process.env.NETLIFY_SITE_ID,
+  token: process.env.NETLIFY_AUTH_TOKEN,
+});
+
 
 const apiKey = process.env.SENDGRID_API_KEY;
 const senderEmail = process.env.SENDER_EMAIL;
