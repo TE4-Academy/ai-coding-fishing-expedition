@@ -35,86 +35,38 @@ function packageLabel(pkg) {
 }
 
 exports.handler = async (event) => {
-  // Preflight
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: corsHeaders, body: "" };
   }
 
   if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Method Not Allowed" }),
-    };
+    return { statusCode: 405, headers: corsHeaders, body: JSON.stringify({ error: "Method Not Allowed" }) };
   }
 
   try {
-    
     if (!apiKey) {
-      return {
-        statusCode: 500,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          error: "Server configuration error",
-          details: "Email service not configured. Set SENDGRID_API_KEY in Netlify env vars.",
-        }),
-      };
-      
-
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: "Server configuration error", details: "Email service not configured. Set SENDGRID_API_KEY in Netlify env vars." }) };
     }
-
-    
     if (!senderEmail) {
-      return {
-        statusCode: 500,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          error: "Server configuration error",
-          details: "Sender email not configured. Set SENDER_EMAIL in Netlify env vars.",
-        }),
-      };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: "Server configuration error", details: "Sender email not configured. Set SENDER_EMAIL in Netlify env vars." }) };
     }
-
     if (!operatorEmail) {
-      return {
-        statusCode: 500,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          error: "Server configuration error",
-          details: "Operator email not configured. Set OPERATOR_EMAIL (Peters mail) in Netlify env vars.",
-        }),
-      };
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: "Server configuration error", details: "Operator email not configured. Set OPERATOR_EMAIL (Peters mail) in Netlify env vars." }) };
     }
-
     if (!tokenSecret) {
-      return {
-        statusCode: 500,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          error: "Server configuration error",
-          details: "Missing BOOKING_TOKEN_SECRET in Netlify env vars.",
-        }),
-      };
-      const siteID = process.env.NETLIFY_SITE_ID;
-const token = process.env.NETLIFY_AUTH_TOKEN;
-
-if (!siteID || !token) {
-  return {
-    statusCode: 500,
-    headers: corsHeaders,
-    body: JSON.stringify({
-      error: "Server configuration error",
-      details: "Missing NETLIFY_SITE_ID or NETLIFY_AUTH_TOKEN for Netlify Blobs.",
-    }),
-  };
-}
-
-const store = getStore("bookings", {
-  consistency: "strong",
-  siteID,
-  token,
-});
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: "Server configuration error", details: "Missing BOOKING_TOKEN_SECRET in Netlify env vars." }) };
     }
+
+    const siteID = process.env.NETLIFY_SITE_ID;
+    const blobsToken = process.env.NETLIFY_AUTH_TOKEN;
+
+    if (!siteID || !blobsToken) {
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: "Server configuration error", details: "Missing NETLIFY_SITE_ID or NETLIFY_AUTH_TOKEN for Netlify Blobs." }) };
+    }
+
+    const store = getStore("bookings", { consistency: "strong", siteID, token: blobsToken });
+
+   
 
     const booking = JSON.parse(event.body || "{}") || {};
 
