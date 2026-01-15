@@ -3,11 +3,7 @@ const { getStore } = require("@netlify/blobs");
 
 
 const sgMail = require("@sendgrid/mail");
-const store = getStore("bookings", {
-  consistency: "strong",
-  siteID: process.env.NETLIFY_SITE_ID,
-  token: process.env.NETLIFY_AUTH_TOKEN,
-});
+
 
 
 // Environment variables
@@ -53,6 +49,7 @@ exports.handler = async (event) => {
   }
 
   try {
+    
     if (!apiKey) {
       return {
         statusCode: 500,
@@ -62,8 +59,29 @@ exports.handler = async (event) => {
           details: "Email service not configured. Set SENDGRID_API_KEY in Netlify env vars.",
         }),
       };
+      const siteID = process.env.NETLIFY_SITE_ID;
+const token = process.env.NETLIFY_AUTH_TOKEN;
+
+if (!siteID || !token) {
+  return {
+    statusCode: 500,
+    headers: corsHeaders,
+    body: JSON.stringify({
+      error: "Server configuration error",
+      details: "Missing NETLIFY_SITE_ID or NETLIFY_AUTH_TOKEN for Netlify Blobs.",
+    }),
+  };
+}
+
+const store = getStore("bookings", {
+  consistency: "strong",
+  siteID,
+  token,
+});
+
     }
 
+    
     if (!senderEmail) {
       return {
         statusCode: 500,

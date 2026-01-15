@@ -3,11 +3,7 @@ const { getStore } = require("@netlify/blobs");
 
 
 const sgMail = require("@sendgrid/mail");
-const store = getStore("bookings", {
-  consistency: "strong",
-  siteID: process.env.NETLIFY_SITE_ID,
-  token: process.env.NETLIFY_AUTH_TOKEN,
-});
+
 
 
 const apiKey = process.env.SENDGRID_API_KEY;
