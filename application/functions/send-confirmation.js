@@ -59,25 +59,7 @@ exports.handler = async (event) => {
           details: "Email service not configured. Set SENDGRID_API_KEY in Netlify env vars.",
         }),
       };
-      const siteID = process.env.NETLIFY_SITE_ID;
-const token = process.env.NETLIFY_AUTH_TOKEN;
-
-if (!siteID || !token) {
-  return {
-    statusCode: 500,
-    headers: corsHeaders,
-    body: JSON.stringify({
-      error: "Server configuration error",
-      details: "Missing NETLIFY_SITE_ID or NETLIFY_AUTH_TOKEN for Netlify Blobs.",
-    }),
-  };
-}
-
-const store = getStore("bookings", {
-  consistency: "strong",
-  siteID,
-  token,
-});
+      
 
     }
 
@@ -113,6 +95,25 @@ const store = getStore("bookings", {
           details: "Missing BOOKING_TOKEN_SECRET in Netlify env vars.",
         }),
       };
+      const siteID = process.env.NETLIFY_SITE_ID;
+const token = process.env.NETLIFY_AUTH_TOKEN;
+
+if (!siteID || !token) {
+  return {
+    statusCode: 500,
+    headers: corsHeaders,
+    body: JSON.stringify({
+      error: "Server configuration error",
+      details: "Missing NETLIFY_SITE_ID or NETLIFY_AUTH_TOKEN for Netlify Blobs.",
+    }),
+  };
+}
+
+const store = getStore("bookings", {
+  consistency: "strong",
+  siteID,
+  token,
+});
     }
 
     const booking = JSON.parse(event.body || "{}") || {};
@@ -154,14 +155,8 @@ const store = getStore("bookings", {
       notes: String(booking.notes || "").trim(),
     };
 
-    // Persist to Netlify Blobs
-    const store = getStore("bookings", {
-  consistency: "strong",
-  siteID: process.env.NETLIFY_SITE_ID,
-  token: process.env.NETLIFY_AUTH_TOKEN,
-});
-
     await store.setJSON(bookingId, record);
+
 
     // Secure action token for accept/deny links
     const token = hmac(`${bookingId}|${record.createdAt}`);
